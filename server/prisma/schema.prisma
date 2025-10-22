@@ -13,3 +13,31 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id    String  @id @default(cuid())
+  name  String
+  Topic Topic[]
+  Vote  Vote[]
+}
+
+model Topic {
+  id         String  @id @default(cuid())
+  content    String
+  author     User    @relation(fields: [authorId], references: [id])
+  authorId   String
+  forArg     String?
+  againstArg String?
+  votes      Vote[]
+}
+
+model Vote {
+  topicId   String
+  userId    String
+  for       Boolean
+  reasoning String?
+  topic     Topic   @relation(fields: [topicId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@id([topicId, userId])
+}
